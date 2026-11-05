@@ -42,14 +42,72 @@ I'm an AI and I don't have real-time capabilities to provide current weather con
 checking a reliable weather website for the most up-to-date information.
 
 
-Prompt 1: The model followed the four-sentence limit and gave a reasonable explanation of what git commit does. However, it did not directly address the user as "sports fans," even though it tried to use a sports-related tone. The rule about admitting uncertainty did not apply because the model was able to answer the question.
-
+Prompt 1: The model followed the four-sentence limit and gave a explanation of what git commit does. But it did not directly highlight the user as "sports fans" . The rule about admitting uncertainty did not apply because the model was able to answer the question.
 Prompt 2: The model followed the sentence limit by responding in two sentences. It also correctly admitted that it did not have access to real-time weather information instead of making up an answer. However, it did not address the user as "sports fans," so that rule was broken.
-
 Overall, the model followed the sentence limit in both responses, but it did not consistently follow the required form of address. It successfully acknowledged uncertainty when asked about current weather conditions.
 
 Task 5
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % ollama run commentator "What is the weather in Atlanta right now?"
+Sports fans, the weather in Atlanta right now is still an unknown. I'm here to keep you updated with live 
+information.
+
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % ollama run commentator "What is the weather in Atlanta right now?"
+Sports fans, I'm sorry, I don't have real-time weather updates.
+
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % ollama run commentator "What is the weather in Atlanta right now?"
+Sports fans, I'm sorry, I don't have live weather updates.
 
 I added a MESSAGE example to the Modelfile to demonstrate how the model should respond when it cannot verify current weather information. After rebuilding the model, I ran the same Atlanta weather question three separate times.
+The model admitted that it did not know the current weather in 3 out of 3 responses. All three responses also addressed the user as "sports fans," which was an improvement compared with the earlier test. The first response was a little inconsistent because it suggested providing live updates even though the model does not have access to real-time information. 
+Overall, the example seemed to make the model more consistent about acknowledging what it does not know.
 
-The model admitted that it did not know the current weather in **3 out of 3 responses**. All three responses also addressed the user as "sports fans," which was an improvement compared with the earlier test. The first response was a little inconsistent because it suggested providing live updates even though the model does not have access to real-time information. Overall, the example seemed to make the model more consistent about acknowledging what it does not know.
+Task 6
+
+git add ollama/ commands.txt
+git commit -m "Add commentator chatbot"
+git push origin main
+
+Task 7
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % python3 ollama/ask_local.py
+Sports fans, I'm an expert in sports commentary and I can tell you that git commit is a command used in version control systems to commit changes to a project's codebase.
+CompletionUsage(completion_tokens=37, prompt_tokens=119, total_tokens=156, completion_tokens_details=None, prompt_tokens_details=PromptTokensDetails(audio_tokens=None, cache_write_tokens=None, cached_tokens=109, image_tokens=None, text_tokens=None))
+
+The original `granite4:350m` model used 36 prompt tokens, while my customized `commentator` model used 119 for the same question. This is because `commentator` also processes the system instructions and example conversation I added to its Modelfile, so the input contains more than just the question itself.
+
+Task 8
+
+wrong one: 
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % cat -n ollama/ask_json.py
+     1	import json
+     2	
+     3	from openai import OpenAI
+     4	
+     5	client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+     6	
+     7	response = client.chat.completions.create(
+     8	    model="commentator",
+     9	    messages=[{"role": "user", "content": 'Reply in JSON with the keys "answer" and "confidence". What does git commit do?'}],
+    10	    temperature=0,
+    11	    max_tokens=15,
+    12	    response_format={"type": "json_object"},
+    13	)
+    14	
+    15	reply = response.choices[0].message.content
+    16	print(reply)
+    17	print(response.choices[0].finish_reason)
+    18	print(json.loads(reply)["answer"])
+right one: 
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % python3 ollama/ask_json.py
+{
+  "answer": "I'm sorry, I don't have enough information to answer that question. I can only provide responses based on the data I've been trained on.",
+  "confidence": 0.9
+}
+stop
+I'm sorry, I don't have enough information to answer that question. I can only provide responses based on the data I've been trained on.
+
+
+The first run failed because the script only allowed the model to generate 15 tokens. The response was cut off before the JSON was complete, so the finish reason was `length` and Python raised a `JSONDecodeError`. After I increased `max_tokens` to 150, the model returned a complete JSON object with the keys `answer` and `confidence`. The finish reason changed to `stop`, and the script was able to extract and print the answer without an error.
+
+git add ollama/ commands.txt
+git commit -m "Add Python calls"
+git push origin main
