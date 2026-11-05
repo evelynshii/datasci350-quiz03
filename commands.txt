@@ -69,6 +69,10 @@ git push origin main
 
 Task 7
 (base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % python3 ollama/ask_local.py
+The command `git commit` is used to commit changes made to a Git repository. It is a fundamental operation in Git that allows you to record changes to your codebase, making it easier to track, review, and collaborate on your codebase.
+CompletionUsage(completion_tokens=51, prompt_tokens=36, total_tokens=87, completion_tokens_details=None, prompt_tokens_details=PromptTokensDetails(audio_tokens=None, cache_write_tokens=None, cached_tokens=3, image_tokens=None, text_tokens=None))、
+
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % python3 ollama/ask_local.py
 Sports fans, I'm an expert in sports commentary and I can tell you that git commit is a command used in version control systems to commit changes to a project's codebase.
 CompletionUsage(completion_tokens=37, prompt_tokens=119, total_tokens=156, completion_tokens_details=None, prompt_tokens_details=PromptTokensDetails(audio_tokens=None, cache_write_tokens=None, cached_tokens=109, image_tokens=None, text_tokens=None))
 
