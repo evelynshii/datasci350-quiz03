@@ -1,14 +1,34 @@
 Task 1
 
-Command: ollama pull granite4:350m
-Explanation: Downloads the granite4:350m model to my Mac.
-Result: Download completed successfully.
+ollama pull granite4:350m
 
-Command: ollama show granite4:350m
-Explanation: Displays the model's properties, including its parameter count and quantization.
+ollama show granite4:350m
+Model
+    architecture        granite
+    parameters          352.38M
+    context length      32768
+    embedding length    1024
+    quantization        BF16
+    template source     go_template
 
-Command: ollama ls
-Explanation: Lists the locally downloaded models and their disk sizes.
+Capabilities
+    completion
+    tools
+
+License
+    Apache License
+    Version 2.0, January 2004
+    ...
+    
+ollama ls
+
+NAME                    ID              SIZE      MODIFIED
+granite4:350m           5eee845b49c4    708 MB    Less than a second ago
+embeddinggemma:latest   85462619ee72    621 MB    6 days ago
+sorter-hot:latest       f4cf5ee6c4e2    1.3 GB    2 weeks ago
+sorter:latest           791071e41eab    1.3 GB    2 weeks ago
+coach:latest            4d1e5a77759a    1.3 GB    2 weeks ago
+llama3.2:1b             baf6a787fdff    1.3 GB    4 weeks ago
 
 Model parameters: 352.38M
 Quantization: BF16
@@ -16,6 +36,7 @@ Predicted size: 352.38 million × 16 / 8 = 704.76 MB
 Actual size: 708 MB
 
 The predicted size is close to the actual size. The small difference may come from additional model data and metadata.
+
 
 Task 2
 
@@ -115,3 +136,82 @@ The first run failed because the script only allowed the model to generate 15 to
 git add ollama/ commands.txt
 git commit -m "Add Python calls"
 git push origin main
+
+Task 9 & Task 10
+
+I used the EC2 instance provided by my professor because my AWS account could not launch the required instance.
+
+cd ~/Downloads
+chmod 400 evelyn-quiz03.pem
+ssh -i evelyn-quiz03.pem ubuntu@ec2-100-59-196-237.compute-1.amazonaws.com
+
+ubuntu@ip-172-31-29-185:~$
+
+chmod 400 makes the private key readable only by its owner.
+The ssh -i command uses this key to authenticate and connect to the remote Ubuntu EC2 instance.
+
+Task 11
+
+sudo apt update
+sudo apt install -y python3-pandas python3-matplotlib python3-seaborn
+
+Task 12
+
+cd ~/datasci350-quiz03
+scp -i ~/Downloads/evelyn-quiz03.pem aws/traffic_analysis.py aws/website_traffic.txt ubuntu@ec2-100-59-196-237.compute-1.amazonaws.com:~/
+traffic_analysis.py       100% 1983
+website_traffic.txt       100% 2107
+
+ls -l traffic_analysis.py website_traffic.txt
+-rw-r--r-- 1 ubuntu ubuntu 1983 Nov 5 23:25 traffic_analysis.py
+-rw-r--r-- 1 ubuntu ubuntu 2107 Nov 5 23:25 website_traffic.txt
+
+Task 13
+ubuntu@ip-172-31-29-185:~$ python3 traffic_analysis.py > results.txt
+cat results.txt
+Website Traffic Analysis:
+========================
+Total days analysed: 30
+Average page views: 2366
+Average unique visitors: 1973
+Peak traffic day: 2025-05-25 with 2680 unique visitors
+Average bounce rate: 24.2%
+Analysis complete. Results saved to 'traffic_analysis.png'
+ubuntu@ip-172-31-29-185:~$ cat /var/lib/cloud/data/instance-id >> results.txt
+sha256sum results.txt > fingerprint.txt
+ubuntu@ip-172-31-29-185:~$ ls -l results.txt fingerprint.txt traffic_analysis.png
+cat results.txt
+cat fingerprint.txt
+-rw-rw-r-- 1 ubuntu ubuntu    78 Nov  5 23:29 fingerprint.txt
+-rw-rw-r-- 1 ubuntu ubuntu   291 Nov  5 23:29 results.txt
+-rw-rw-r-- 1 ubuntu ubuntu 88915 Nov  5 23:29 traffic_analysis.png
+Website Traffic Analysis:
+========================
+Total days analysed: 30
+Average page views: 2366
+Average unique visitors: 1973
+Peak traffic day: 2025-05-25 with 2680 unique visitors
+Average bounce rate: 24.2%
+Analysis complete. Results saved to 'traffic_analysis.png'
+i-0983e215417bb006f
+672bc0281282aab8f7599e0dc72f8daa57a1174a2e12adc8e691588ae965b230  results.txt
+
+Task 14
+
+scp -i ~/Downloads/evelyn-quiz03.pem ubuntu@ec2-100-59-196-237.compute-1.amazonaws.com:~/results.txt ubuntu@ec2-100-59-196-237.compute-1.amazonaws.com:~/fingerprint.txt ubuntu@ec2-100-59-196-237.compute-1.amazonaws.com:~/traffic_analysis.png aws/
+ls -lh aws/results.txt aws/fingerprint.txt aws/traffic_analysis.png
+
+-rw-r--r--  1 evelynshi  staff    78B Nov  5 18:32 aws/fingerprint.txt
+-rw-r--r--  1 evelynshi  staff   291B Nov  5 18:32 aws/results.txt
+-rw-r--r--  1 evelynshi  staff    87K Nov  5 18:32 aws/traffic_analysis.png
+
+Task 15
+When an EC2 instance is stopped, I no longer pay for its compute usage, but I still pay for storage resources such as attached EBS volumes and any other billable resources that remain allocated.
+
+git add commands.txt aws/ ollama/
+git commit -m "Add AWS analysis results"
+git push origin main
+git status
+
+AI claimer: 
+I used ChatGPT to help me check responses for grammar issues, troubleshoot Python errors (especially in Task 8), and understand the commands needed to connect to AWS EC2.
