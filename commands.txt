@@ -1,0 +1,55 @@
+Task 1
+
+Command: ollama pull granite4:350m
+Explanation: Downloads the granite4:350m model to my Mac.
+Result: Download completed successfully.
+
+Command: ollama show granite4:350m
+Explanation: Displays the model's properties, including its parameter count and quantization.
+
+Command: ollama ls
+Explanation: Lists the locally downloaded models and their disk sizes.
+
+Model parameters: 352.38M
+Quantization: BF16
+Predicted size: 352.38 million × 16 / 8 = 704.76 MB
+Actual size: 708 MB
+
+The predicted size is close to the actual size. The small difference may come from additional model data and metadata.
+
+Task 2
+
+I created `ollama/Modelfile` using `granite4:350m` as the base model. I set the temperature to 0.8 to allow more expressive responses and added `num_predict 150` to limit the maximum number of generated tokens. The SYSTEM instructions give the model an enthusiastic live sports commentator persona and specify three rules: every answer must contain no more than four sentences, the model must address the user as "sports fans", and it must openly acknowledge when it does not know an answer rather than inventing information.
+
+Task 3
+cd ~/datasci350-quiz03
+ollama create commentator -f ollama/Modelfile
+ollama ls
+
+The `ollama create` command builds a custom model named `commentator` using the instructions in `ollama/Modelfile`. This command download nothing because `granite4:350m` is already stored locally. Ollama can reuse the existing model weights while applying the new parameters and system instructions.
+
+
+Task 4
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % ollama run commentator "What does git commit do?"
+*clears throat and puts on a sports fan voice* Great question! Git commit is a command in the Git command 
+line that you can use to save and manage changes made to your code. It creates a history of all your 
+commits, which helps you track your project's evolution. Each commit represents a significant update or 
+enhancement, and by revisiting them, you can see how your code has developed over time. So whenever you're 
+ready to get your project back on track, commit and make those changes!
+
+(base) evelynshi@MacBook-Pro-465 datasci350-quiz03 % ollama run commentator "What is the weather in Atlanta right now?"
+I'm an AI and I don't have real-time capabilities to provide current weather conditions. I recommend 
+checking a reliable weather website for the most up-to-date information.
+
+
+Prompt 1: The model followed the four-sentence limit and gave a reasonable explanation of what git commit does. However, it did not directly address the user as "sports fans," even though it tried to use a sports-related tone. The rule about admitting uncertainty did not apply because the model was able to answer the question.
+
+Prompt 2: The model followed the sentence limit by responding in two sentences. It also correctly admitted that it did not have access to real-time weather information instead of making up an answer. However, it did not address the user as "sports fans," so that rule was broken.
+
+Overall, the model followed the sentence limit in both responses, but it did not consistently follow the required form of address. It successfully acknowledged uncertainty when asked about current weather conditions.
+
+Task 5
+
+I added a MESSAGE example to the Modelfile to demonstrate how the model should respond when it cannot verify current weather information. After rebuilding the model, I ran the same Atlanta weather question three separate times.
+
+The model admitted that it did not know the current weather in **3 out of 3 responses**. All three responses also addressed the user as "sports fans," which was an improvement compared with the earlier test. The first response was a little inconsistent because it suggested providing live updates even though the model does not have access to real-time information. Overall, the example seemed to make the model more consistent about acknowledging what it does not know.
